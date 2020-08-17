@@ -29,6 +29,7 @@
               <el-button
                 type="primary"
                 round class="register-btn"
+                :disabled="cantRegister"
                 @click="register"
               >
                 注册
@@ -40,15 +41,17 @@
 </template>
 
 <script>
+  import { register } from '@/util/api';
+
   export default {
     name: 'register',
     data() {
       const validateUsername = (rule, value, callback) => {
+        clearTimeout(this.registerForm);
         if (!value) {
           return callback(new Error('请输入用户名'));
         }
-        this.timer = setTimeout(() => {
-          clearTimeout(this.timer);
+        this.c = setTimeout(() => {
           if (value.length < 8) {
             callback(new Error('用户名不能少于8位'));
           } else if (value.length > 15) {
@@ -61,11 +64,11 @@
         }, 800);
       };
       const validatePassword = (rule, value, callback) => {
+        clearTimeout(this.registerTimer);
         if (!value) {
           return callback(new Error('请输入密码'));
         }
-        this.timer = setTimeout(() => {
-          clearTimeout(this.timer);
+        this.registerTimer = setTimeout(() => {
           if (value.length < 6) {
             callback(new Error('密码长度不能少于6位'));
           } else if (value.length > 15) {
@@ -119,7 +122,8 @@
             validator: validateEmail,
             trigger: 'blur'
           }]
-        }
+        },
+        cantRegister: false
       };
     },
     methods: {
@@ -129,9 +133,27 @@
         });
       },
       register() {
+        console.log(1);
         this.$refs.registerForm.validate(valid => {
+          console.log(valid);
           if (valid) {
-
+            this.cantRegister = true;
+            register(this.form).then(({ flag, msg }) => {
+              if (flag === 0) {
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  center: 'true'
+                });
+              } else if (flag === 1) {
+                this.$message({
+                  message: msg,
+                  type: 'error',
+                  center: 'true'
+                });
+              }
+              this.cantRegister = false;
+            });
           }
         });
       }
@@ -143,10 +165,6 @@
   .register
       width: 100%
       height: 100%
-      background-image: url("../assets/timg.jpg")
-      background-repeat: no-repeat
-      background-position: center
-      background-size: cover
       .row-box
         height: 100%
         .card-box

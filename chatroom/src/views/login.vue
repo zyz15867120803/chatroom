@@ -21,7 +21,19 @@
                   <el-input type="password" v-model="form.password" prefix-icon="el-icon-s-grid" show-password clearable></el-input>
                 </el-form-item>
               </el-form>
-              <el-button type="primary" round class="login-btn" @click="login">登录</el-button>
+              <el-button type="primary" round class="login-btn" @click="login" :disabled="cantLogin">登录</el-button>
+              <div class="footer">
+                <el-switch
+                  v-model="rememberMe"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-text="记住我"
+                >
+                </el-switch>
+                <router-link :to="{name: 'userCheck'}">
+                  <el-link type="danger">忘记密码？</el-link>
+                </router-link>
+              </div>
             </el-card>
         </el-col>
       </el-row>
@@ -29,8 +41,14 @@
 </template>
 
 <script>
+  import { login } from '@/util/api';
+
   export default {
     name: 'login',
+    created() {
+      this.form.username = '' || localStorage.getItem('username');
+      this.form.password = '' || localStorage.getItem('password');
+    },
     data() {
       return {
         form: {
@@ -48,7 +66,9 @@
             message: '请输入密码',
             trigger: 'blur'
           }]
-        }
+        },
+        cantLogin: false,
+        rememberMe: true
       };
     },
     methods: {
@@ -60,7 +80,33 @@
       login() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-
+            this.cantLogin = true;
+            login(this.form).then(({ flag, msg }) => {
+              if (flag === 0) {
+                if (this.rememberMe) {
+                  localStorage.setItem('username', this.form.username);
+                  localStorage.setItem('password', this.form.password);
+                } else {
+                  localStorage.setItem('username', this.form.username);
+                  localStorage.removeItem('password');
+                }
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  center: true
+                });
+                this.$router.push({
+                  name: 'chatroom'
+                });
+              } else if (flag === 1) {
+                this.$message({
+                  message: msg,
+                  type: 'error',
+                  center: true
+                });
+              }
+              this.cantLogin = false;
+            });
           }
         });
       }
@@ -72,10 +118,6 @@
     .login
       width: 100%
       height: 100%
-      background-image: url("../assets/timg.jpg")
-      background-repeat: no-repeat
-      background-position: center
-      background-size: cover
       .row-box
         height: 100%
         .card-box
@@ -86,4 +128,8 @@
             align-items: center
           .login-btn
             width: 100%
+          .footer
+            display: flex
+            justify-content: space-between
+            padding: 15px 15px 0 15px
 </style>
