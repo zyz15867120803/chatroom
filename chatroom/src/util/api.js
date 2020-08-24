@@ -7,3 +7,13 @@ export function login(loginForm) {
 export function register(registerForm) {
     return instance.post('/register', JSON.stringify(registerForm)).then(res => res.data);
 }
+
+export function getVerification() {
+}
+
+export function usercheck() {
+}
+
+export function changepwd() {
+
+}

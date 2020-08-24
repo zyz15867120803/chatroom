@@ -16,11 +16,11 @@ open({
     credentials: true
   }));
   app.use(express.static(path.join(__dirname, 'static')));
+  app.use();
   app.use(express.urlencoded({ extended: true}));
   app.use(express.json());
 
   app.post('/login', async (req, res, next) => {
-      console.log(req.body);
       const username = req.body.username;
       const password = req.body.password;
       const loginUser = await db.get("select * from users where username = ? and password = ?", username, password);
@@ -39,7 +39,6 @@ open({
   });
 
   app.post('/register', async (req, res, next) => {
-      console.log(req.body);
       const username = req.body.username;
       const password = req.body.password;
       const email = req.body.email;
@@ -58,6 +57,23 @@ open({
           });
       }
   });
+
+  app.post('/usercheck', async (req, res, next) => {
+      const username = req.body.username;
+      const email = await db.get("select email from users where username = ?", username);
+      console.log(email);
+      if (email) {
+      } else {
+          res.json({
+              flag: 1,
+              msg: '该用户不存在，请检查用户名输入是否正确'
+          });
+      }
+  });
+
+  app.post('/changepwd', async (req, res, next) => {
+
+  })
 
   app.listen(port, () => console.log('server listening on port ', port));
 }).catch(() => {});
