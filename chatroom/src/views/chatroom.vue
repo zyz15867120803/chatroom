@@ -11,6 +11,19 @@
           >
             user
           </el-avatar>
+          <el-menu class="menu">
+            <el-menu-item-group>
+              <el-menu-item index="1-1" class="menu-item">
+                <i class="el-icon-chat-round menu-icon"></i>
+              </el-menu-item>
+              <el-menu-item index="1-2" class="menu-item">
+                <i class="el-icon-user-solid menu-icon"></i>
+              </el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item index="2" class="menu-item">
+              <i class="el-icon-s-operation menu-icon"></i>
+            </el-menu-item>
+          </el-menu>
         </el-aside>
         <el-main class="main">
           <keep-alive>
@@ -41,7 +54,18 @@
         height: 100%
         background: rgba(0, 0, 0, 0.8)
         .avatar
-          margin: 10px
+          margin: 15px 10px
+        .menu
+          height: calc(100% - 200px)
+          border: 0
+          display: flex
+          flex-direction: column
+          justify-content: space-between
+          .menu-item
+            padding: 0 !important
+            text-align: center
+            .menu-icon
+              margin: 0
       .main
         height: 100%
         padding: 0
