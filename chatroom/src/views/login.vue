@@ -96,7 +96,7 @@
                   center: true
                 });
                 this.$router.push({
-                  name: 'chatroom'
+                  name: 'room'
                 });
               } else if (flag === 1) {
                 this.$message({

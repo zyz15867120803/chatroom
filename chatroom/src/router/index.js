@@ -6,6 +6,10 @@ import ChatRoom from '@/views/chatroom';
 import Forget from '@/views/forget';
 import UserCheck from '@/components/usercheck';
 import ChangePwd from '@/components/changepwd';
+import RoomList from '@/components/roomlist';
+import Room from '@/components/room';
+import UserList from '@/components/userlist';
+import User from '@/components/user';
 
 Vue.use(VueRouter);
 
@@ -27,7 +31,7 @@ const routes = [
     component: Forget,
     children: [{
       name: 'userCheck',
-      path: '',
+      path: 'usercheck',
       component: UserCheck
     }, {
       name: 'changePwd',
@@ -37,7 +41,26 @@ const routes = [
   }, {
     name: 'chatroom',
     path: '/chatroom',
-    component: ChatRoom
+    component: ChatRoom,
+    children: [{
+      name: 'room',
+      path: 'room',
+      component: RoomList,
+      children: [{
+        name: 'roomid',
+        path: ':roomid',
+        component: Room
+      }]
+    }, {
+      name: 'user',
+      path: 'user',
+      component: UserList,
+      children: [{
+        name: 'username',
+        path: ':username',
+        component: User
+      }]
+    }]
   }
 ];
 

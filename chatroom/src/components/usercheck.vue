@@ -59,7 +59,21 @@
       getVerification() {
         this.$refs.checkForm.validateField('username', e => {
           if (e === null || e === '') {
-            getVerification().then();
+            getVerification(this.form.username).then(({ flag, msg }) => {
+              if (flag === 0) {
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  center: 'true'
+                });
+              } else if (flag === 1) {
+                this.$message({
+                  message: msg,
+                  type: 'error',
+                  center: 'true'
+                });
+              }
+            });
           }
         });
       },

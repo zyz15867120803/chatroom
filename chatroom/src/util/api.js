@@ -8,7 +8,8 @@ export function register(registerForm) {
     return instance.post('/register', JSON.stringify(registerForm)).then(res => res.data);
 }
 
-export function getVerification() {
+export function getVerification(username) {
+    return instance.post('/verification', JSON.stringify({ username })).then(res => res.data);
 }
 
 export function usercheck() {

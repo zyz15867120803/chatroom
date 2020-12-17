@@ -1,10 +1,21 @@
 const express = require('express');
 const path = require('path');
-const sqlite3 = require("sqlite3");
-const { open } = require("sqlite");
+const sqlite3 = require('sqlite3');
+const { open } = require('sqlite');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 const app = express();
 const port = 8888;
+
+const mailTransport = nodemailer.createTransport({
+  //host: 'smtp.qq.email',
+  service: 'qq',
+  secure: true,
+  auth: {
+      user: '849246870@qq.com',
+      pass: 'pxnbloburanvbeaj'
+  }
+});
 
 open({
   filename: '../database/chatroom.db',
@@ -16,10 +27,9 @@ open({
     credentials: true
   }));
   app.use(express.static(path.join(__dirname, 'static')));
-  app.use();
   app.use(express.urlencoded({ extended: true}));
   app.use(express.json());
-
+  // 登录
   app.post('/login', async (req, res, next) => {
       const username = req.body.username;
       const password = req.body.password;
@@ -37,7 +47,7 @@ open({
           });
       }
   });
-
+  // 注册
   app.post('/register', async (req, res, next) => {
       const username = req.body.username;
       const password = req.body.password;
@@ -57,12 +67,30 @@ open({
           });
       }
   });
-
-  app.post('/usercheck', async (req, res, next) => {
+  // 获取验证码
+  app.post('/verification', async (req, res, next) => {
       const username = req.body.username;
-      const email = await db.get("select email from users where username = ?", username);
-      console.log(email);
-      if (email) {
+      const result = await db.get("select email from users where username = ?", username);
+      if (result) {
+        const options = {
+          from: '849246870@qq.com',
+          to: result.email,
+          subject: 'chatroom密码重置验证码',
+          text: '1111'
+        };
+        mailTransport.sendMail(options, (err, msg) => {
+          if (err) {
+            res.json({
+              flag: 1,
+              msg: '验证码发送失败，请重试'
+            });
+          } else {
+            res.json({
+              flag: 0,
+              msg: '验证码已发送至邮箱，请注意查收'
+            });
+          }
+        });
       } else {
           res.json({
               flag: 1,
@@ -71,9 +99,20 @@ open({
       }
   });
 
+  // 用户确认
+  app.post('/usercheck', (req, res, next) => {
+
+  });
+
+  // 更改密码
   app.post('/changepwd', async (req, res, next) => {
 
-  })
+  });
+
+  // 获取HTML页面
+  app.get('/' , (req, res, next) => {
+
+  });
 
   app.listen(port, () => console.log('server listening on port ', port));
 }).catch(() => {});
